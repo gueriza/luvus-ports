@@ -108,7 +108,7 @@ def main():
     for name in sorted(by_ws, key=str.lower):
         if count >= max_ports:
             break
-        rows.append({"text": name, "tone": "muted"})
+        rows.append({"text": name})
         for port in sorted(by_ws[name]):
             if count >= max_ports:
                 break
