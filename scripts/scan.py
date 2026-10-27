@@ -131,7 +131,7 @@ def main():
 
     payload = json.dumps(rows)
     proc = subprocess.run(
-        [LUVUS, "ui", "dock", "push", "--id", DOCK_ID, "--title", "Ports"],
+        [LUVUS, "ui", "dock", "push", "--id", DOCK_ID, "--title", "PORTS"],
         input=payload,
         text=True,
         capture_output=True,
