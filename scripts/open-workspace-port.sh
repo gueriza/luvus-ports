@@ -1,7 +1,7 @@
 #!/bin/sh
 # Right-click a WORKSPACES row: open the lowest-numbered port owned by that
 # workspace. LUVUS_WORKSPACE_CWD is the clicked row's folder.
-# Usage: luvus module run ry.p-luvus open-workspace-port
+# Usage: luvus module run ry.luvus-ports open-workspace-port
 
 set -u
 

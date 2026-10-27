@@ -1,4 +1,4 @@
-# p-luvus
+# luvus-ports
 
 A [Luvus](https://luvus.dev) module that shows open TCP ports per workspace in
 the Workspaces sidebar, the way Zentty's workspace badge does. Each port is a
@@ -10,6 +10,8 @@ background listeners (AirPlay, browsers, archived projects) are filtered out.
 ## How it works
 
 - `scripts/poll.sh` (startup hook) spawns a detached background loop.
+- Workspace and tab events also trigger an immediate rescan, the same
+  event-driven pattern as the `branch-dock` example module.
 - Every N seconds (setting `interval`, default 5s) `scripts/scan.py`:
   1. Lists listening TCP ports with `lsof`.
   2. Resolves each port's owning process cwd (macOS: `lsof`, Linux: `/proc`).
@@ -25,7 +27,7 @@ background listeners (AirPlay, browsers, archived projects) are filtered out.
 ## Install
 
 ```sh
-luvus module link /path/to/p-luvus
+luvus module link /path/to/luvus-ports
 ```
 
 ## Settings
@@ -36,13 +38,13 @@ luvus module link /path/to/p-luvus
 ## Manual control
 
 ```sh
-luvus module run ry.p-luvus refresh   # rescan now
-luvus module settings ry.p-luvus      # view settings
+luvus module run ry.luvus-ports refresh   # rescan now
+luvus module settings ry.luvus-ports      # view settings
 luvus ui dock move --id ry:ports --side right   # relocate the dock
 ```
 
 To stop the poller: `kill $(cat .poll.pid)` in the module directory, then
-`luvus module disable ry.p-luvus`.
+`luvus module disable ry.luvus-ports`.
 
 ## Requirements
 
