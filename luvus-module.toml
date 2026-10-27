@@ -2,13 +2,13 @@ id = "ry.p-luvus"
 name = "Ports"
 version = "0.1.0"
 min_luvus_version = "0.8.3"
-description = "Clickable open-port links per workspace in a sidebar dock, like Zentty's port badge."
+description = "Clickable open-port links per workspace, shown in the Workspaces sidebar. System ports are filtered out."
 platforms = ["macos", "linux"]
 
 [[docks]]
 id = "ry:ports"
 title = "Ports"
-placement = "sidebar.right"
+placement = "sidebar.left"
 
 [[startup]]
 command = ["sh", "scripts/poll.sh"]
@@ -40,3 +40,9 @@ command = ["python3", "scripts/scan.py"]
 id = "open"
 title = "Open port in browser"
 command = ["sh", "scripts/open.sh"]
+
+[[actions]]
+id = "open-workspace-port"
+title = "Open project port"
+contexts = ["workspace"]
+command = ["sh", "scripts/open-workspace-port.sh"]

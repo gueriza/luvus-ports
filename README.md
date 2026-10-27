@@ -1,8 +1,11 @@
 # p-luvus
 
-A [Luvus](https://luvus.dev) module that shows open TCP ports per workspace in a
-sidebar dock, the way Zentty's workspace badge does. Each port is a clickable
-row that opens `http://localhost:<port>` in your browser.
+A [Luvus](https://luvus.dev) module that shows open TCP ports per workspace in
+the Workspaces sidebar, the way Zentty's workspace badge does. Each port is a
+clickable row that opens `http://localhost:<port>` in your browser.
+
+Only ports owned by a process inside an open workspace are shown. System and
+background listeners (AirPlay, browsers, archived projects) are filtered out.
 
 ## How it works
 
@@ -10,14 +13,14 @@ row that opens `http://localhost:<port>` in your browser.
 - Every N seconds (setting `interval`, default 5s) `scripts/scan.py`:
   1. Lists listening TCP ports with `lsof`.
   2. Resolves each port's owning process cwd (macOS: `lsof`, Linux: `/proc`).
-  3. Matches cwd to a workspace via longest-prefix against
-     `luvus workspace list`.
-  4. Pushes one dock row per port to the `Ports` dock (right sidebar).
-- Clicking a row runs the `open` action, which opens the row's URL with
+  3. Keeps only ports whose cwd matches an open workspace (longest prefix).
+  4. Pushes grouped rows to the `Ports` dock (left sidebar, under
+     Workspaces): one muted header row per workspace, one clickable port row
+     each.
+- Clicking a port row runs the `open` action: opens the row's URL with
   `open` / `xdg-open`.
-
-Rows for processes inside a workspace get a `working` dot and the workspace
-name; unmatched system listeners get an `idle` dot and the process name.
+- Right-click any WORKSPACES row and pick "Open project port" to open that
+  workspace's lowest-numbered port (toast if it has none).
 
 ## Install
 
@@ -25,19 +28,17 @@ name; unmatched system listeners get an `idle` dot and the process name.
 luvus module link /path/to/p-luvus
 ```
 
-The dock appears on the first poll tick. Placement is configurable in
-Settings, Layout (Left / Right / Off).
-
 ## Settings
 
 - `interval`: poll interval in seconds (default 5).
-- `max_ports`: max rows shown (default 30).
+- `max_ports`: max port rows shown (default 30).
 
 ## Manual control
 
 ```sh
 luvus module run ry.p-luvus refresh   # rescan now
 luvus module settings ry.p-luvus      # view settings
+luvus ui dock move --id ry:ports --side right   # relocate the dock
 ```
 
 To stop the poller: `kill $(cat .poll.pid)` in the module directory, then
@@ -47,3 +48,9 @@ To stop the poller: `kill $(cat .poll.pid)` in the module directory, then
 
 - macOS or Linux with `lsof` and `python3` (stdlib only).
 - Luvus >= 0.8.3.
+
+## Note
+
+Luvus has no API for annotating the built-in WORKSPACES rows themselves, so
+the ports live in a module dock placed directly under the Workspaces list,
+plus a right-click action on workspace rows.

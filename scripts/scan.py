@@ -91,33 +91,43 @@ def main():
 
     ws_list = workspaces()
     seen = set()
-    entries = []
+    by_ws = {}  # workspace name -> sorted list of ports (project ports only)
 
-    for port, pid, pname in listening_ports():
+    for port, pid, _pname in listening_ports():
         if port in seen:
             continue
         seen.add(port)
         cwd = pid_cwd(pid)
         ws = match_workspace(cwd, ws_list) if cwd else None
-        label = ws["name"] if ws else (pname or "system")
-        entries.append((label, ws is not None, port))
-
-    entries.sort(key=lambda e: (not e[1], e[0].lower(), e[2]))
-    entries = entries[:max_ports]
+        if ws is None:
+            continue  # system noise: only workspace-owned ports are shown
+        by_ws.setdefault(ws["name"], []).append(port)
 
     rows = []
-    for label, in_ws, port in entries:
-        rows.append(
-            {
-                "text": f"{label} :{port}",
-                "dot": "working" if in_ws else "idle",
-                "action": "open",
-                "value": f"http://localhost:{port}",
-            }
-        )
+    count = 0
+    for name in sorted(by_ws, key=str.lower):
+        if count >= max_ports:
+            break
+        rows.append({"text": name, "tone": "muted"})
+        for port in sorted(by_ws[name]):
+            if count >= max_ports:
+                break
+            count += 1
+            rows.append(
+                {
+                    "spans": [
+                        {"text": "  ", "tone": "muted"},
+                        {"text": f":{port}", "tone": "accent"},
+                    ],
+                    "text": f":{port}",
+                    "dot": "working",
+                    "action": "open",
+                    "value": f"http://localhost:{port}",
+                }
+            )
 
     if not rows:
-        rows = [{"text": "no open ports", "dot": "idle", "tone": "muted"}]
+        rows = [{"text": "no project ports", "dot": "idle", "tone": "muted"}]
 
     payload = json.dumps(rows)
     proc = subprocess.run(
