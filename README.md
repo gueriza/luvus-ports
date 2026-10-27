@@ -7,6 +7,8 @@ clickable row that opens `http://localhost:<port>` in your browser.
 Only ports owned by a process inside an open workspace are shown. System and
 background listeners (AirPlay, browsers, archived projects) are filtered out.
 
+![PORTS dock in the Luvus sidebar: one header row per workspace, one clickable port row each](docs/screenshot.png)
+
 ## How it works
 
 - `scripts/poll.sh` (startup hook) spawns a detached background loop.
