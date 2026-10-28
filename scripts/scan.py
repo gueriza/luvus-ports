@@ -105,9 +105,13 @@ def main():
 
     rows = []
     count = 0
+    first_group = True
     for name in sorted(by_ws, key=str.lower):
         if count >= max_ports:
             break
+        if not first_group:
+            rows.append({"text": "", "tone": "muted"})
+        first_group = False
         rows.append({"text": name})
         for port in sorted(by_ws[name]):
             if count >= max_ports:
@@ -116,10 +120,9 @@ def main():
             rows.append(
                 {
                     "spans": [
-                        {"text": "  ", "tone": "muted"},
-                        {"text": f":{port}", "tone": "accent"},
+                        {"text": f"{port}", "tone": "accent"},
                     ],
-                    "text": f":{port}",
+                    "text": f"{port}",
                     "dot": "working",
                     "action": "open",
                     "value": f"http://localhost:{port}",
